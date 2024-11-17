@@ -1,25 +1,36 @@
-//export { auth as middleware } from '@/auth';
-
+import { auth } from '@/auth';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { auth } from './auth';
 
-const protectedRoutes = ['/middleware'];
-
-export default async function middleware(req: NextRequest) {
+// Export the middleware function
+export async function middleware(request: NextRequest) {
   const session = await auth();
 
-  const isProtected = protectedRoutes.some((route) =>
-    req.nextUrl.pathname.startsWith(route),
+  // Define protected routes
+  const protectedRoutes = ['/middleware'];
+  const isProtectedRoute = protectedRoutes.some((path) =>
+    request.nextUrl.pathname.startsWith(path),
   );
 
-  if (!session && isProtected) {
-    const absoluteUrl = new URL('/', req.nextUrl.origin);
-    return NextResponse.redirect(absoluteUrl.toString());
+  // Redirect to home if accessing protected route without session
+  if (isProtectedRoute && !session) {
+    return NextResponse.redirect(new URL('/', request.url));
   }
+
   return NextResponse.next();
 }
 
+// Update the matcher configuration
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public (public files)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico|public).*)',
+  ],
 };

@@ -7,12 +7,16 @@ import Github from 'next-auth/providers/github';
 
 export const {
   handlers: { GET, POST },
+  auth,
   signIn,
   signOut,
-  auth,
 } = NextAuth({
   adapter: PrismaAdapter(db),
   session: { strategy: 'jwt' },
+  pages: {
+    signIn: '/signin',
+    error: '/error',
+  },
   providers: [
     Github({
       clientId: process.env.AUTH_GITHUB_ID,
@@ -28,24 +32,20 @@ export const {
         },
         password: { label: 'Password', type: 'password' },
       },
-      authorize: async (credentials) => {
-        if (!credentials.email || !credentials.password) {
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
           throw new Error('Missing credentials');
         }
 
-        const email = credentials.email as string;
-
         const user = await db.user.findUnique({
-          where: {
-            email,
-          },
+          where: { email: credentials.email as string },
         });
 
         if (!user || !user.hashedPassword) {
           throw new Error('No user found');
         }
 
-        const isValid = bcrypt.compareSync(
+        const isValid = await bcrypt.compare(
           credentials.password as string,
           user.hashedPassword,
         );
@@ -58,4 +58,12 @@ export const {
       },
     }),
   ],
+  callbacks: {
+    async session({ session, token }) {
+      if (token.sub && session.user) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
+  },
 });
