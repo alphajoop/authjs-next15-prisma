@@ -1,15 +1,13 @@
 'use client';
 
+import { logout } from '@/app/actions/auth';
 import { LogOut } from 'lucide-react';
-import { signOut } from 'next-auth/react';
 import { Button } from './ui/button';
 
 export default function Logout() {
   const handleLogout = async () => {
     try {
-      await signOut({
-        callbackUrl: '/',
-      });
+      await logout();
     } catch (error) {
       console.error('Error logging out:', error);
     }

@@ -1,7 +1,7 @@
 'use client';
 
+import { login } from '@/app/actions/auth';
 import { Github, Loader } from 'lucide-react';
-import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { Button } from './ui/button';
 
@@ -11,9 +11,7 @@ export default function LoginGithub() {
   const handleGithubLogin = async () => {
     setIsLoading(true);
     try {
-      await signIn('github', {
-        callbackUrl: '/',
-      });
+      await login('github');
     } catch (error) {
       console.error('Error signing in with GitHub:', error);
     } finally {
