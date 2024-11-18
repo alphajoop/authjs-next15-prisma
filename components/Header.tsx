@@ -18,7 +18,7 @@ import React from 'react';
 const components: { title: string; href: string; description: string }[] = [
   {
     title: 'RSC Example',
-    href: '/server',
+    href: '/server-example',
     description: 'Protecting React Server Component.',
   },
   {
