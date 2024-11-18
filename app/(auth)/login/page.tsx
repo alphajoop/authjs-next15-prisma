@@ -1,5 +1,6 @@
 'use client';
 
+import { LoginWithCredentials } from '@/app/actions/auth';
 import LoginGithub from '@/components/LoginGithub';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,37 +12,13 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { signIn } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { FormEvent } from 'react';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 
 export default function SignIn() {
-  const router = useRouter();
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-
-    try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        // Gérer l'erreur
-        console.error(result.error);
-      } else {
-        router.push('/');
-      }
-    } catch (error) {
-      console.error('Sign in error:', error);
-    }
-  };
+  const [state, action] = useActionState(LoginWithCredentials, undefined);
+  const { pending } = useFormStatus();
 
   return (
     <div className="grid min-h-screen items-center justify-center font-geistsans">
@@ -53,7 +30,7 @@ export default function SignIn() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>
+          <form action={action}>
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="email">Email</Label>
@@ -62,8 +39,10 @@ export default function SignIn() {
                   name="email"
                   placeholder="Email"
                   type="email"
-                  required
                 />
+                {state?.errors?.email && (
+                  <p className="text-sm text-red-500">{state.errors.email}</p>
+                )}
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="password">Password</Label>
@@ -72,10 +51,19 @@ export default function SignIn() {
                   name="password"
                   placeholder="Password"
                   type="password"
-                  required
                 />
+                {state?.errors?.password && (
+                  <p className="text-sm text-red-500">
+                    {state.errors.password}
+                  </p>
+                )}
               </div>
-              <Button type="submit">Sign In</Button>
+              <Button disabled={pending} type="submit">
+                {pending ? 'Loading...' : 'Sign In'}
+              </Button>
+              {state?.error && (
+                <p className="text-sm text-red-500">{state.error}</p>
+              )}
               <p className="text-start text-sm">
                 Don&apos;t have an account?{' '}
                 <Link href="/signup" className="text-blue-500 hover:underline">
