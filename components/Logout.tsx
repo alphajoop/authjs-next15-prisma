@@ -1,7 +1,6 @@
 'use client';
 
 import { logout } from '@/app/actions/auth';
-import { LogOut } from 'lucide-react';
 import { Button } from './ui/button';
 
 export default function Logout() {
@@ -15,8 +14,7 @@ export default function Logout() {
 
   return (
     <Button onClick={handleLogout} className="flex items-center gap-2">
-      <LogOut className="h-5 w-5" />
-      <span>Logout</span>
+      Logout
     </Button>
   );
 }

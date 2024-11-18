@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import Link from 'next/link';
+import CustomLink from '@/components/CustomLink';
 
 export default async function Home() {
   const session = await auth();
@@ -11,16 +11,12 @@ export default async function Home() {
         </h1>
         <p className="text-base">
           This is an example site to demonstrate how to use{' '}
-          <Link href="https://nextjs.authjs.dev" className="underline">
-            NextAuth.js
-          </Link>{' '}
+          <CustomLink href="https://nextjs.authjs.dev">NextAuth.js</CustomLink>{' '}
           for authentication. Check out the{' '}
-          <Link href="/server" className="underline">
-            Server
-          </Link>{' '}
-          examples to see how to secure pages and get session data.
+          <CustomLink href="/server">Server</CustomLink> examples to see how to
+          secure pages and get session data.
         </p>
-        <div className="flex flex-col rounded-md bg-gray-100">
+        <div className="mt-4 flex flex-col rounded-md bg-gray-100">
           <div className="rounded-t-md bg-gray-200 p-4 font-bold">
             Current Session
           </div>
