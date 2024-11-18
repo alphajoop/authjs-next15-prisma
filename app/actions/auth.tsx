@@ -1,15 +1,13 @@
 'use server';
-/*import { db } from '@/app/lib/db';
+import { db } from '@/lib/db';
+import { saltAndHashPassword } from '@/utils/helper';
+
+import { signIn, signOut } from '@/auth';
 import {
   FormState,
   SigninFormSchema,
   SignupFormSchema,
-} from '@/app/lib/definitions';*
-import { saltAndHashPassword } from '@/utils/helper';
-*/
-
-import { signIn, signOut } from '@/auth';
-import { FormState, SigninFormSchema } from '@/lib/definitions';
+} from '@/lib/definitions';
 import { AuthError } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 
@@ -59,3 +57,53 @@ export const LoginWithCredentials = async (
   }
   revalidatePath('/');
 };
+
+export async function registerWithCredentials(
+  state: FormState,
+  formData: FormData,
+) {
+  const validatedFields = SignupFormSchema.safeParse({
+    name: formData.get('name'),
+    email: formData.get('email'),
+    password: formData.get('password'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const existingUser = await db.user.findUnique({
+    where: { email: formData.get('email') as string },
+  });
+
+  if (existingUser) {
+    return {
+      errors: {
+        email: ['This email is already registered'],
+      },
+    };
+  }
+
+  const hashedPassword = saltAndHashPassword(
+    formData.get('password') as string,
+  );
+
+  await db.user.create({
+    data: {
+      name: formData.get('name') as string,
+      email: formData.get('email') as string,
+      hashedPassword,
+    },
+  });
+
+  // Automatically sign in after registration
+  await signIn('credentials', {
+    email: formData.get('email'),
+    password: formData.get('password'),
+    redirectTo: '/',
+  });
+
+  revalidatePath('/');
+}
