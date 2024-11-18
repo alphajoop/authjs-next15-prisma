@@ -1,4 +1,5 @@
 'use client';
+
 import { LoginWithCredentials } from '@/app/actions/auth';
 import LoginGithub from '@/components/LoginGithub';
 import { Button } from '@/components/ui/button';
@@ -37,13 +38,12 @@ export default function SignIn() {
                   id="email"
                   name="email"
                   placeholder="Email"
-                  type="text"
+                  type="email"
                 />
+                {state?.errors?.email && (
+                  <p className="text-sm text-red-500">{state.errors.email}</p>
+                )}
               </div>
-              {state?.errors?.email && (
-                <p className="text-sm text-red-500">{state.errors.email}</p>
-              )}
-
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="password">Password</Label>
                 <Input
@@ -52,18 +52,18 @@ export default function SignIn() {
                   placeholder="Password"
                   type="password"
                 />
+                {state?.errors?.password && (
+                  <p className="text-sm text-red-500">
+                    {state.errors.password}
+                  </p>
+                )}
               </div>
-              {state?.errors?.password && (
-                <p className="text-sm text-red-500">{state.errors.password}</p>
-              )}
-
               <Button disabled={pending} type="submit">
                 {pending ? 'Loading...' : 'Sign In'}
               </Button>
               {state?.error && (
                 <p className="text-sm text-red-500">{state.error}</p>
               )}
-
               <p className="text-start text-sm">
                 Don&apos;t have an account?{' '}
                 <Link href="/signup" className="text-blue-500 hover:underline">

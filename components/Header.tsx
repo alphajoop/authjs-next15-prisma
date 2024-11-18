@@ -18,12 +18,12 @@ import React from 'react';
 const components: { title: string; href: string; description: string }[] = [
   {
     title: 'RSC Example',
-    href: '/server',
+    href: '/server-example',
     description: 'Protecting React Server Component.',
   },
   {
     title: 'Middleware Example',
-    href: '/middleware',
+    href: '/middleware-example',
     description: ' Using Middleware to protect pages & APIs.',
   },
   {
@@ -72,7 +72,7 @@ export default async function Header() {
 
         {!session?.user ? (
           <Button asChild>
-            <Link href={'signin'}>Sign In</Link>
+            <Link href={'login'}>Sign In</Link>
           </Button>
         ) : (
           <div className="flex items-center gap-x-4">

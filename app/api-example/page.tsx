@@ -1,5 +1,5 @@
 'use client';
-import Link from 'next/link';
+import CustomLink from '@/components/CustomLink';
 import { useEffect, useState } from 'react';
 
 export default function ApiExample() {
@@ -17,19 +17,16 @@ export default function ApiExample() {
         <h1 className="text-3xl font-bold">Route Handler Usage</h1>
         <p className="text-base">
           This page fetches data from an API{' '}
-          <Link
-            href="https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
-            className="underline"
-          >
+          <CustomLink href="https://nextjs.org/docs/app/building-your-application/routing/route-handlers">
             Route Handler
-          </Link>{' '}
+          </CustomLink>{' '}
           The API is protected using the universal{' '}
-          <Link href="https://nextjs.authjs.dev#auth" className="underline">
+          <CustomLink href="https://nextjs.authjs.dev#auth">
             <code>auth()</code>
-          </Link>{' '}
+          </CustomLink>{' '}
           method.
         </p>
-        <div className="flex flex-col rounded-md bg-gray-100">
+        <div className="mt-4 flex flex-col rounded-md bg-gray-100">
           <div className="rounded-t-md bg-gray-200 p-4 font-bold">
             Data from API Route
           </div>

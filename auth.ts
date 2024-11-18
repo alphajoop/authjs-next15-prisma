@@ -1,9 +1,9 @@
-import { db } from '@/app/lib/db';
+import { db } from '@/lib/db';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import bcrypt from 'bcryptjs';
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import Github from 'next-auth/providers/github';
+import GitHub from 'next-auth/providers/github';
 
 export const {
   handlers: { GET, POST },
@@ -14,9 +14,9 @@ export const {
   adapter: PrismaAdapter(db),
   session: { strategy: 'jwt' },
   providers: [
-    Github({
-      clientId: process.env.AUTH_GITHUB_ID,
-      clientSecret: process.env.AUTH_GITHUB_SECRET,
+    GitHub({
+      clientId: process.env.AUTH_GITHUB_ID!,
+      clientSecret: process.env.AUTH_GITHUB_SECRET!,
     }),
     Credentials({
       name: 'Credentials',
@@ -58,4 +58,5 @@ export const {
       },
     }),
   ],
+  secret: process.env.AUTH_SECRET,
 });

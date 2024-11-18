@@ -1,19 +1,42 @@
+'use client';
+
 import { login } from '@/app/actions/auth';
-import { Github } from 'lucide-react';
-import { useFormStatus } from 'react-dom';
+import { Github, Loader } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from './ui/button';
 
 export default function LoginGithub() {
-  const { pending } = useFormStatus();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleGithubLogin = async () => {
+    setIsLoading(true);
+    try {
+      await login('github');
+    } catch (error) {
+      console.error('Error signing in with GitHub:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Button
-      disabled={pending}
-      type="submit"
-      onClick={() => login('github')}
-      className="mx-auto flex w-full items-center font-geistsans"
+      onClick={handleGithubLogin}
+      variant="outline"
+      className="flex w-full items-center justify-center gap-2"
+      disabled={isLoading}
     >
-      <Github className="h-12 w-12" />{' '}
-      {pending ? 'Loading...' : 'Login with Github'}
+      {isLoading ? (
+        <>
+          <Loader className="h-5 w-5 animate-spin" />
+          <span>Loading...</span>
+        </>
+      ) : (
+        <>
+          <Github className="h-5 w-5" />
+          <span>Continue with GitHub</span>
+        </>
+      )}
     </Button>
   );
 }

@@ -1,22 +1,26 @@
-//export { auth as middleware } from '@/auth';
-
+import { auth } from '@/auth';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { auth } from './auth';
 
-const protectedRoutes = ['/middleware'];
-
-export default async function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const session = await auth();
 
-  const isProtected = protectedRoutes.some((route) =>
-    req.nextUrl.pathname.startsWith(route),
+  const protectedPaths = ['/middleware-example'];
+
+  const isProtectedPath = protectedPaths.some((path) =>
+    req.nextUrl.pathname.startsWith(path),
   );
 
-  if (!session && isProtected) {
-    const absoluteUrl = new URL('/', req.nextUrl.origin);
-    return NextResponse.redirect(absoluteUrl.toString());
+  if (!isProtectedPath) {
+    return NextResponse.next();
   }
+
+  if (!session) {
+    const loginUrl = new URL('/login', req.url);
+    loginUrl.searchParams.set('callbackUrl', req.url);
+    return NextResponse.redirect(loginUrl);
+  }
+
   return NextResponse.next();
 }
 

@@ -1,8 +1,8 @@
 import { auth } from '@/auth';
+import CustomLink from '@/components/CustomLink';
 import SessionData from '@/components/session-data';
-import Link from 'next/link';
 
-export default async function Server() {
+export default async function ServerExample() {
   const session = await auth();
   return (
     <div className="mt-16 bg-white px-4 py-12 font-geistsans text-zinc-950 sm:px-6 lg:px-8">
@@ -10,16 +10,13 @@ export default async function Server() {
         <h1 className="text-3xl font-bold">React Server Component Usage</h1>
         <p className="text-base">
           This page is server-rendered as a{' '}
-          <Link
-            href="https://nextjs.org/docs/app/building-your-application/rendering/server-components"
-            className="underline"
-          >
+          <CustomLink href="https://nextjs.org/docs/app/building-your-application/rendering/server-components">
             React Server Component
-          </Link>{' '}
+          </CustomLink>{' '}
           It gets the session data on the server using{' '}
-          <Link href="https://nextjs.authjs.dev#auth" className="underline">
+          <CustomLink href="https://nextjs.authjs.dev#auth">
             <code>auth()</code>
-          </Link>{' '}
+          </CustomLink>{' '}
           method.
         </p>
         <SessionData session={session} />
