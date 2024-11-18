@@ -23,7 +23,7 @@ const components: { title: string; href: string; description: string }[] = [
   },
   {
     title: 'Middleware Example',
-    href: '/middleware',
+    href: '/middleware-example',
     description: ' Using Middleware to protect pages & APIs.',
   },
   {
