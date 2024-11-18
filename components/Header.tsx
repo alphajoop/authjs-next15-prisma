@@ -72,7 +72,7 @@ export default async function Header() {
 
         {!session?.user ? (
           <Button asChild>
-            <Link href={'signin'}>Sign In</Link>
+            <Link href={'login'}>Sign In</Link>
           </Button>
         ) : (
           <div className="flex items-center gap-x-4">
