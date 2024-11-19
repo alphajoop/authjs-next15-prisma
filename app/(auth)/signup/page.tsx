@@ -11,13 +11,23 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Loader } from 'lucide-react';
 import Link from 'next/link';
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 
 export default function SignUp() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [state, action] = useActionState(registerWithCredentials, undefined);
-  const { pending } = useFormStatus();
+
+  const handleSubmit = async (formData: FormData) => {
+    formData.set('name', name);
+    formData.set('email', email);
+    formData.set('password', password);
+    action(formData);
+  };
 
   return (
     <div className="grid min-h-screen items-center justify-center font-geistsans">
@@ -27,16 +37,22 @@ export default function SignUp() {
           <CardDescription>Sign up for a new account</CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={action}>
+          <form action={handleSubmit}>
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="name">Full Name</Label>
-                <Input id="name" name="name" placeholder="John Doe" />
+                <Input
+                  id="name"
+                  name="name"
+                  placeholder="John Doe"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                {state?.errors?.name && (
+                  <p className="text-sm text-red-500">{state.errors.name}</p>
+                )}
               </div>
-              {state?.errors?.name && (
-                <p className="text-sm text-red-500">{state.errors.name}</p>
-              )}
-
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -44,12 +60,13 @@ export default function SignUp() {
                   name="email"
                   placeholder="Email"
                   type="text"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
+                {state?.errors?.email && (
+                  <p className="text-sm text-red-500">{state.errors.email}</p>
+                )}
               </div>
-              {state?.errors?.email && (
-                <p className="text-sm text-red-500">{state.errors.email}</p>
-              )}
-
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="password">Password</Label>
                 <Input
@@ -57,26 +74,24 @@ export default function SignUp() {
                   name="password"
                   placeholder="Password"
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
+                {state?.errors?.password && (
+                  <div className="text-sm text-red-500">
+                    <p>Password must:</p>
+                    <ul className="list-inside list-disc">
+                      {state.errors.password.map((error) => (
+                        <li key={error}>{error}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-              {state?.errors?.password && (
-                <div className="text-sm text-red-500">
-                  <p>Password must:</p>
-                  <ul className="list-inside list-disc">
-                    {state.errors.password.map((error) => (
-                      <li key={error}>{error}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              <Button disabled={pending} type="submit">
-                {pending ? 'Loading...' : 'Create Account'}
-              </Button>
-
+              <SubmitButton />
               <p className="text-start text-sm">
                 Already have an account?{' '}
-                <Link href="/signin" className="text-blue-500 hover:underline">
+                <Link href="/login" className="text-blue-500 hover:underline">
                   Sign in
                 </Link>
               </p>
@@ -88,5 +103,21 @@ export default function SignUp() {
         </div>
       </Card>
     </div>
+  );
+}
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button disabled={pending} type="submit">
+      {pending ? (
+        <div className="flex items-center gap-2">
+          <Loader className="h-5 w-5 animate-spin" />
+          <span>Loading...</span>
+        </div>
+      ) : (
+        'Create Account'
+      )}
+    </Button>
   );
 }
