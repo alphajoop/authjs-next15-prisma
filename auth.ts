@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
+import Google from 'next-auth/providers/google';
 
 export const {
   handlers: { GET, POST },
@@ -18,6 +19,7 @@ export const {
       clientId: process.env.AUTH_GITHUB_ID!,
       clientSecret: process.env.AUTH_GITHUB_SECRET!,
     }),
+    Google,
     Credentials({
       name: 'Credentials',
       credentials: {
