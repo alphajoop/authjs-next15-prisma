@@ -19,7 +19,10 @@ export const {
       clientId: process.env.AUTH_GITHUB_ID!,
       clientSecret: process.env.AUTH_GITHUB_SECRET!,
     }),
-    Google,
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+    }),
     Credentials({
       name: 'Credentials',
       credentials: {
@@ -66,6 +69,7 @@ export const {
       return session;
     },
   },
+  debug: process.env.NODE_ENV === 'development',
   secret: process.env.AUTH_SECRET,
   pages: {
     signIn: '/login',
